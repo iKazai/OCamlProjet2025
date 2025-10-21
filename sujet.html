@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+     <link rel="stylesheet" type="text/css" href="sujet_fichiers/urbain_style.css">
+   <title>Projet programmation fonctionnelle</title>
+</head>
+<body><div id="wholepage">
+<p></p>
+<name>
+Programmation fonctionnelle, projet 2025
+</name>
+<br>
+
+<h3>Dates et principe</h3> Cette page peut être mise à jour, avec
+informations complémentaires, précisions, etc.  Pensez à y revenir
+souvent.<br>
+
+<hr>
+
+Projet à rendre pour le lundi <b>05/01/2026</b> à <b>23h59</b>,
+aucun retard ne sera toléré.<br>  Des soutenances pourront être
+organisées ensuite.<br><br>
+
+Lire tout le sujet (tout ? tout).<br><br>
+
+Un rendu de projet comprend&nbsp;:
+<ul>
+  <li> Un rapport précisant et justifiant vos choix (de structures,
+  etc.), les problèmes techniques qui se posent et les solutions
+  trouvées ; il donne en conclusion les limites de votre programme. Le
+  rapport sera de préférence composé avec LaTeX. Le soin apporté à la
+  grammaire et à l'orthographe est largement pris en compte.</li>
+<li> Un manuel d'utilisation, même minimal.</li>
+<li> Un code <em>abondamment</em> commenté&nbsp;; la première partie
+  des commentaires comportera systématiquement les
+  lignes&nbsp;:<br></li>
+<ol>
+<li><tt>@requires </tt> décrivant les pré-conditions&nbsp;:
+c'est-à-dire conditions sur les paramètres pour une bonne utilisation
+(<b>pas de typage ici</b>),</li>
+<li><tt>@ensures </tt> décrivant la propriété vraie à la sortie de la
+fonction lorsque les pré-conditions sont respectées, le cas échéant
+avec mention des comportements en cas de succès et en cas
+d'échec,</li>
+<li><tt>@raises </tt> énumérant les exceptions éventuellement levées
+  (et précisant dans quel(s) cas elles le sont).</li>
+</ol>
+On pourra préciser des informations additionnelles si des techniques
+particulières méritent d'être mentionnées.<br><br>  Le code doit
+enfin <b>compiler</b> sans erreur (évidemment) et sans warning.
+</ul>
+Avez-vous lu tout le sujet ?
+
+<hr>
+
+<h4>Protocole de dépôt</h4>
+<p>
+  Vous devez rendre&nbsp;:
+  </p><ul>
+    <li>votre rapport au format <tt>pdf</tt></li>
+    <li>vos fichiers de code.</li>
+    <li>vos tests.</li>
+  </ul>
+  rassemblés dans une archive tar gzippée identifiée
+  comme <em>votre_prénom_votre_nom</em><tt>.tgz</tt>.<br>  La
+  commande devrait ressembler à&nbsp;:<br>
+  <tt>tar cvfz randolph_carter.tgz rapport.pdf fichiers.ml
+  autres_truc_éventuels</tt>…
+<p></p>
+<p>
+  <b>Lisez le man</b> et testez le contenu de votre archive.  Une
+  commande comme par exemple&nbsp;:<br>
+  <tt>tar tvf randolph_carter.tgz</tt><br> doit lister les fichiers
+  et donner leur taille.<br>  Une archive qui ne contient pas les
+  fichiers demandés ne sera pas excusable. Une archive qui n'est pas
+  au bon format ne sera pas considérée.
+</p>
+<p>
+<b>Procédure de dépôt</b><br> Vous devez enregistrer votre archive
+tar dans le dépôt dédié au cours IPF (prfo23-projet-2025 ) en vous
+connectant à <tt>http://exam.ensiie.fr</tt>.  Ce dépôt sera ouvert
+jusqu'au 05 janvier inclus.
+</p>
+
+<hr>
+
+<h3>Contexte</h3>
+<p> Le but de ce projet est de mettre en place un planificateur de
+déplacements dans une base martienne..</p>
+
+<p>
+  Une base martienne est composée de modules tous suffisamment
+  spacieux pour contenir la totalité de la colonie.  Le passage entre
+  deux modules se fera via un système de tunnels de longueurs variables
+  et ne permettant chacun que le passage d'une personne à la
+  fois. Bien entendu, nous désirons que le système s'adapte à tout
+  plan de base que nous lui soumettrons.
+</p>
+
+<p>
+  Notre colonie se développera en trois étapes&nbsp;:
+  </p><ol>
+    <li>dans un premier temps, pour des problèmes de sécurité, notre
+    colonie sera réduite à un seul individu,</li>
+    <li>dans un second temps, le développement aidant, de nombreux
+    individus peupleront notre colonie mais le système aura la
+    simple tâche de réguler leurs déplacements.</li>
+    <li>enfin, la capacité de calcul aidant, le système devra
+    permettre la planification totale des déplacements.</li>
+    </ol>
+<p></p>
+
+<p><b>Ne remplir que la première phase de ce travail n'est pas
+envisageable, répondre correctement aux deux premières phases est
+acceptable.  Une solution, même imparfaite, à la troisième
+phase sera considérée comme un bon travail.</b></p>
+
+Lire les interfaces des modules Ocaml <em>String</em> et <em>Map</em>
+est conseillé.
+
+<h3>Phase 1</h3>
+
+<p>
+  Votre système n'aura à gérer que le déplacement d'un individu unique
+  d'un module de la station à un autre en minimisant le temps de
+  déplacement.
+</p>
+
+<p>Votre programme devra prendre en entrée le plan de la base, le
+  module de départ et celui d'arrivée, et devra afficher un chemin à
+  suivre ainsi que le temps de parcours associé à ce chemin. Ce chemin
+  devra être le plus rapide possible. Il y aura au plus un tunnel
+  entre deux modules. Les tunnels peuvent être utilisés dans les deux
+  sens.
+</p>
+
+<p> Le format d'entrée des plans est le suivant&nbsp;:
+  </p><ul>
+    <li>Une première ligne contenant un unique entier <tt>n</tt>.</li>
+    <li> <tt>n</tt> lignes comprenant chacune la description d'une
+    liaison au format<div style="margin-left: 80px;"> &lt;nom du module de départ&gt; &lt;nom du
+    module d'arrivée&gt; &lt; durée du transit&gt;</div>  La durée est
+    exprimée sous forme d'un entier, les noms sont des chaînes de
+    caractères.</li>
+    <li> Une ligne comprenant deux noms de modules, un module de
+    départ et un module d'arrivée.</li>
+    </ul>
+<p></p>
+
+<p> Pour plus de facilité, nous vous fournirons un module de lecture
+de plan (schéma de la base et modules de départ et de
+destination). Tous les temps de parcours seront comptés en minutes
+(pas de fraction de minute à envisager).<br>  Ce code est proposé sous
+la forme d'un module dont vous pourrez trouver le
+corps <a href="http://pedago-ext.ensiie.fr/~julien.forest/PRFO23/projet/analyse.ml">ici</a> et
+l'interface <a href="http://pedago-ext.ensiie.fr/~julien.forest/PRFO23/projet/analyse.mli">là</a>.
+</p>
+
+<p>
+  Pour cette première phase, vous devez impérativement&nbsp;:
+</p><ol>
+  <li value="1"> Proposer une structure de données <b>pertinente</b>
+  pour représenter le plan à l'intérieur de votre système (le
+  format fourni en entrée n'est pas forcément adapté à votre
+  problème).</li>
+  <li> Fournir un algorithme et un code de recherche de parcours le plus
+  rapide possible en fonction du plan, du module de départ et du
+  module d'arrivée. </li>
+</ol>
+
+Votre code devra écrire sur la sortie standard de votre programme le
+parcours trouvé au format suivant: <div style="margin-left: 80px;">
+&lt;temps&gt;&nbsp;: &lt;premier_module&gt; -&gt; ... -&gt;
+&lt;dernier_module&gt;</div> Afin de faciliter la vérification de
+votre programme, vous <b>devrez</b> utiliser la fonction <tt>output_sol_1</tt> fournie dans le module <tt>Analyse</tt>. 
+<p></p>
+
+
+<h3>Phase 2</h3> Lors de cette phase, votre système devra gérer les
+déplacements de plusieurs personnes au sein de la base. Compte tenu de
+la faible capacité de calcul présente à ce stade sur la base, nous
+vous fournirons, en plus du plan, les chemins de chacun. Votre système
+devra retourner la <i>séquence des déplacements</i> de chacun en tenant
+compte des chemins à parcourir et de la contrainte d'utilisation
+unique de chaque tunnel en minimisant le temps de parcours global (donc le temps
+du dernier arrivé à destination).
+
+<p>
+  Le format d'entrée des plans est le suivant&nbsp;:
+  </p><ul>
+    <li>Une première ligne contenant un unique entier <tt>n</tt></li>
+    <li> <tt>n</tt> lignes comprenant chacune la description d'une
+    liaison au format <div style="margin-left: 80px;"> &lt;nom du module de départ&gt; &lt;nom du
+    module d'arrivée&gt; &lt; durée du transit&gt;. </div>La durée est
+    exprimée sous forme d'un entier, les noms sont des chaînes de
+    caractères.</li>
+    <li> Une ligne comprenant un unique entier <tt>m</tt>.</li>
+    <li> <tt>m</tt> lignes comprenant chacune une liste de noms de
+    modules séparés par des <tt>-&gt;</tt> et correspondant au chemin d'un
+    individu.
+  </li></ul>
+<p></p>
+<p>
+  Votre programme devra afficher&nbsp;:
+  </p><ul>
+    <li><tt>m</tt> lignes contenant chacune
+  une séquence de déplacement, c'est-à-dire une liste de noeuds  séparés par
+  des <tt>-k-&gt;</tt> où <tt>k</tt> est le moment où notre
+  explorateur débute sa traversée entre les deux modules
+      correspondants.</li>
+    <li>Une ligne contenant un entier unique
+      correspondant à la durée totale des déplacements.</li>
+    </ul>
+<p></p>
+
+<h3>Phase 3</h3> Lors de cette phase, votre système devra gérer de
+manière autonome les déplacements de plusieurs personnes au sein de la
+base. Nous vous fournirons, en plus du plan, les points de départ et
+d'arrivée de chacun. Votre système devra retourner la <i>séquence des
+déplacements</i> de chacun en tenant compte de la contrainte
+d'utilisation unique de chaque tunnel en minimisant le temps de
+parcours global (donc le temps du dernier arrivé à destination).
+
+<p>
+  Le format d'entrée des plans est le suivant&nbsp;:
+  </p><ul>
+    <li>Une première ligne contenant un unique entier <tt>n</tt></li>
+    <li> <tt>n</tt> lignes comprenant chacune la description d'une
+    liaison au format <div style="margin-left: 80px;"> &lt;nom du module de départ&gt; &lt;nom du
+    module d'arrivée&gt; &lt; durée du transit&gt;. </div>La durée est
+    exprimée sous forme d'un entier, les noms sont des chaînes de
+    caractères.</li>
+    <li> Une ligne comprenant un unique entier <tt>m</tt>.</li>
+    <li> <tt>m</tt> lignes comprenant chacune deux noms de
+    modules séparés par des <tt>-&gt;</tt> et correspondant aux points de départ et d'arrivée d'un
+    individu.
+  </li></ul>
+<p></p>
+<p>
+  Votre programme devra afficher&nbsp;:
+  </p><ul>
+    <li><tt>m</tt> lignes contenant chacune
+  une séquence de déplacement, c'est-à-dire une liste de noeuds  séparés par
+  des <tt>-k-&gt;</tt> où <tt>k</tt> est le moment où notre
+  explorateur débute sa traversée entre les deux modules
+      correspondants.</li>
+    <li>Une ligne contenant un entier unique
+      correspondant à la durée totale des déplacements.</li>
+    </ul>
+<p></p>
+
+
+
+
+</div></body></html>
