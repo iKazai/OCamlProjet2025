@@ -1,0 +1,10 @@
+8
+Hub Laboratoire 5
+Hub Habitat 7
+Laboratoire Observatoire 4
+Laboratoire Atelier 6
+Habitat Atelier 4
+Habitat Ferme 6
+Ferme Observatoire 5
+Atelier Airlock 4
+Hub Observatoire
