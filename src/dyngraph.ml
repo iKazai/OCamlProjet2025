@@ -1,4 +1,3 @@
-(* Re-déclarations des module types exigées par l'interface dyngraph.mli *)
 module type VERTEX_TYPE = sig
   type t
   val compare : t -> t -> int
@@ -53,9 +52,7 @@ module Make(E : VERTEX_TYPE) : DYNAMIC_GRAPH with type vertex = E.t = struct
   let remove_vertex v g = 
     let name = E.get_name v in
     if Hashtbl.mem g name then begin
-      (* Remove the vertex from adjacency list *)
       Hashtbl.remove g name;
-      (* Remove all edges pointing to this vertex *)
       Hashtbl.iter (fun key neighbors ->
         let filtered = List.filter (fun (neighbor, _) -> E.get_name neighbor <> name) neighbors in
         Hashtbl.replace g key filtered
@@ -67,13 +64,11 @@ module Make(E : VERTEX_TYPE) : DYNAMIC_GRAPH with type vertex = E.t = struct
     let src_name = E.get_name src in
     let dst_name = E.get_name dst in
     
-    (* Ensure both vertices exist *)
     let g = add_vertex src g in
     let g = add_vertex dst g in
     
-    (* Add edge from src to dst *)
     let current_neighbors = Hashtbl.find g src_name in
-    (* Remove existing edge if any, then add new one *)
+
     let filtered_neighbors = List.filter (fun (neighbor, _) -> E.get_name neighbor <> dst_name) current_neighbors in
     let new_neighbors = (dst, weight) :: filtered_neighbors in
     Hashtbl.replace g src_name new_neighbors;
@@ -91,6 +86,7 @@ module Make(E : VERTEX_TYPE) : DYNAMIC_GRAPH with type vertex = E.t = struct
     end;
     g
 
+    
   let dijkstra g source =
 
     let get_neighbors v =

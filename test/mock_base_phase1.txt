@@ -1,0 +1,6 @@
+< nombre d'arêtes | nombre de tunnels >
+noeud_1 noeud_2 <poids de l'arête>
+.
+. // nombre d'arêtes
+.
+noeud_départ noeud_arrivée

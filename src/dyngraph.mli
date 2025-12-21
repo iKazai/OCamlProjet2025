@@ -16,7 +16,7 @@ module type DYNAMIC_GRAPH = sig
     val remove_vertex : vertex -> graph -> graph
     val add_edge : vertex -> int -> vertex -> graph -> graph
     val remove_edge : vertex -> int -> vertex -> graph -> graph
-  val dijkstra : graph -> vertex -> (int * vertex list) list
+    val dijkstra : graph -> vertex -> (int * vertex list) list
 end
 
 module Vertex : VERTEX_TYPE

@@ -2,12 +2,12 @@ OCAMLC = ocamlc
 INCLUDES = -I src
 
 # Main executable
-TARGET = prfo2025
+TARGET = prfo2025.exe
 SRCS = src/dyngraph.ml src/analyse.ml src/main.ml
 OBJS = $(SRCS:.ml=.cmo)
 
 # Test executable
-TEST_TARGET = run_tests
+TEST_TARGET = run_tests.exe
 TEST_SRCS = test/test_best_path.ml
 
 all: $(TARGET)
@@ -16,7 +16,7 @@ $(TARGET): $(OBJS)
 	$(OCAMLC) $(INCLUDES) -o $@ $(OBJS)
 
 test: $(TEST_TARGET)
-	./$(TEST_TARGET)
+	$(TEST_TARGET)
 
 $(TEST_TARGET): src/dyngraph.cmo $(TEST_SRCS)
 	$(OCAMLC) $(INCLUDES) -o $@ src/dyngraph.cmo $(TEST_SRCS)
@@ -38,6 +38,15 @@ src/analyse.cmo: src/analyse.cmi
 src/main.cmo: src/analyse.cmo src/dyngraph.cmo
 
 clean:
-	rm -f src/*.cm[iox] src/*.o test/*.cm[iox] test/*.o $(TARGET) $(TEST_TARGET)
+	if exist src\*.cmi del /Q src\*.cmi
+	if exist src\*.cmo del /Q src\*.cmo
+	if exist src\*.cmx del /Q src\*.cmx
+	if exist src\*.o del /Q src\*.o
+	if exist test\*.cmi del /Q test\*.cmi
+	if exist test\*.cmo del /Q test\*.cmo
+	if exist test\*.cmx del /Q test\*.cmx
+	if exist test\*.o del /Q test\*.o
+	if exist $(TARGET) del /Q $(TARGET)
+	if exist $(TEST_TARGET) del /Q $(TEST_TARGET)
 
 .PHONY: all clean test

@@ -27,16 +27,7 @@ let build_graph transitions =
 	in
 	graph, name_to_vertex
 
-let print_graph g =
-	Hashtbl.iter
-		(fun name neighbors ->
-			 Printf.printf "%s : %s\n" name
-				 (neighbors
-					|> List.map (fun (v, w) ->
-							Printf.sprintf "--%d--> %s" w (Dyngraph.Vertex.get_name v))
-					|> String.concat ", "))
-		g
-
+	
 let () =
 	let file = Sys.argv.(1) in
 	let transitions, (start_name, goal_name) = Analyse.analyse_file_1 file in
