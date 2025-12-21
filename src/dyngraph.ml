@@ -1,14 +1,5 @@
-module type VERTEX_TYPE = sig
-  type t
-  val compare : t -> t -> int
-  val to_string : t -> string
-  val get_id : t -> int
-  val get_name : t -> string
-  val make : string -> int -> t
-end
-
 module type DYNAMIC_GRAPH = sig
-  type vertex
+  type vertex = string
   type graph
   val empty : graph
   val is_empty : graph -> bool
@@ -16,82 +7,63 @@ module type DYNAMIC_GRAPH = sig
   val remove_vertex : vertex -> graph -> graph
   val add_edge : vertex -> int -> vertex -> graph -> graph
   val remove_edge : vertex -> int -> vertex -> graph -> graph
-  val dijkstra : graph -> vertex -> (int * vertex list) list
+  val dijkstra : graph -> vertex -> (vertex * (int * vertex list)) list
 end
 
-(* Implémentation concrète de Vertex *)
-module Vertex = struct
-  type t = { name : string; id : int }
-  let compare a b = Int.compare a.id b.id
-  let to_string v = Printf.sprintf "%s(%d)" v.name v.id
-  let get_id v = v.id
-  let get_name v = v.name
-  let make name id = { name; id }
-end
+module Graph : DYNAMIC_GRAPH = struct
+  type vertex = string
+  type graph = (string, (string * int) list) Hashtbl.t
 
-(* Foncteur conforme à l'interface *)
-module Make(E : VERTEX_TYPE) : DYNAMIC_GRAPH with type vertex = E.t = struct
-  type vertex = E.t
-  type graph = (string, (vertex * int) list) Hashtbl.t
-
-  module VMap = Map.Make(struct
-    type t = vertex
-    let compare = E.compare
-  end)
+  module VMap = Map.Make(String)
 
   let empty : graph = Hashtbl.create 0
 
   let is_empty g = Hashtbl.length g = 0
 
   let add_vertex v g = 
-    let name = E.get_name v in
-    if not (Hashtbl.mem g name) then
-      Hashtbl.add g name [];
+    if not (Hashtbl.mem g v) then
+      Hashtbl.add g v [];
     g
 
   let remove_vertex v g = 
-    let name = E.get_name v in
-    if Hashtbl.mem g name then begin
-      Hashtbl.remove g name;
+    if Hashtbl.mem g v then begin
+      Hashtbl.remove g v;
       Hashtbl.iter (fun key neighbors ->
-        let filtered = List.filter (fun (neighbor, _) -> E.get_name neighbor <> name) neighbors in
+        let filtered = List.filter (fun (neighbor, _) -> neighbor <> v) neighbors in
         Hashtbl.replace g key filtered
       ) g
     end;
     g
 
   let add_edge src weight dst g =
-    let src_name = E.get_name src in
-    let dst_name = E.get_name dst in
-    
     let g = add_vertex src g in
     let g = add_vertex dst g in
     
-    let current_neighbors = Hashtbl.find g src_name in
-
-    let filtered_neighbors = List.filter (fun (neighbor, _) -> E.get_name neighbor <> dst_name) current_neighbors in
+    let current_neighbors = Hashtbl.find g src in
+    let filtered_neighbors = List.filter (fun (neighbor, _) -> neighbor <> dst) current_neighbors in
     let new_neighbors = (dst, weight) :: filtered_neighbors in
-    Hashtbl.replace g src_name new_neighbors;
+    Hashtbl.replace g src new_neighbors;
     g
 
   let remove_edge src weight dst g =
-    let src_name = E.get_name src in
-    let dst_name = E.get_name dst in
-    
-    if Hashtbl.mem g src_name then begin
-      let current_neighbors = Hashtbl.find g src_name in
+    if Hashtbl.mem g src then begin
+      let current_neighbors = Hashtbl.find g src in
       let filtered_neighbors = List.filter (fun (neighbor, w) -> 
-          not (E.get_name neighbor = dst_name && w = weight)) current_neighbors in
-      Hashtbl.replace g src_name filtered_neighbors
+          not (neighbor = dst && w = weight)) current_neighbors in
+      Hashtbl.replace g src filtered_neighbors
     end;
     g
 
-    
+
+  (*
+  Renvoie une liste qui a pour clé les noeuds du graphe 
+  et pour valeur un couple contenant la distance de ce noeud à la source et 
+  une liste contenant le chemin vers ce noeud
+  *)
   let dijkstra g source =
 
     let get_neighbors v =
-      let name = E.get_name v in
-      match Hashtbl.find_opt g name with Some l -> l | None -> []
+      match Hashtbl.find_opt g v with Some l -> l | None -> []
     in
 
     let rec loop pq dist pred =
@@ -120,15 +92,16 @@ module Make(E : VERTEX_TYPE) : DYNAMIC_GRAPH with type vertex = E.t = struct
     let dist, pred = loop [0, source] dist0 VMap.empty in
 
     let rec build_path v acc =
-      if E.compare v source = 0 then source :: acc
+      if v = source then source :: acc
       else match VMap.find_opt v pred with
         | None -> acc
         | Some p -> build_path p (v :: acc)
     in
 
     VMap.fold (fun v _ acc ->
-      if E.compare v source = 0 then acc
-      else (E.get_id v, build_path v []) :: acc
+      let distance = match VMap.find_opt v dist with Some x -> x | None -> max_int in
+      let path = build_path v [] in
+      (v, (distance, path)) :: acc
     ) dist []
 
 end

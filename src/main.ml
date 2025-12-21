@@ -1,37 +1,19 @@
-module G = Dyngraph.Make(Dyngraph.Vertex)
-
 let build_graph transitions =
-	let id_counter = ref 0 in
-	let name_to_vertex = Hashtbl.create 16 in
-
-	let get_vertex name =
-		match Hashtbl.find_opt name_to_vertex name with
-		| Some v -> v
-		| None ->
-				incr id_counter;
-				let v = Dyngraph.Vertex.make name !id_counter in
-				Hashtbl.add name_to_vertex name v;
-				v
+	let rec aux transitions_acc graph_acc =
+		match transitions_acc with
+		| [] -> graph_acc
+		| (src, dst, w) :: tl ->
+				let g = Dyngraph.Graph.add_edge src w dst graph_acc in
+				let g = Dyngraph.Graph.add_edge dst w src g in
+				aux tl g
 	in
+	aux transitions Dyngraph.Graph.empty
 
-	let graph =
-		List.fold_left
-			(fun g (src, dst, w) ->
-				 let v_src = get_vertex src in
-				 let v_dst = get_vertex dst in
-				 let g = G.add_edge v_src w v_dst g in
-				 let g = G.add_edge v_dst w v_src g in
-				 g)
-			G.empty
-			transitions
-	in
-	graph, name_to_vertex
 
-	
 let () =
 	let file = Sys.argv.(1) in
 	let transitions, (start_name, goal_name) = Analyse.analyse_file_1 file in
-	let graph, table = build_graph transitions in
-	Printf.printf "Plan charge : %d tunnels, %d modules.\n"
-		(List.length transitions) (Hashtbl.length table);
-	Printf.printf "Depart : %s | Arrivee : %s\n" start_name goal_name;
+	let graph = build_graph transitions in
+	let results = Dyngraph.Graph.dijkstra graph start_name in
+	let (_, (distance, path)) = List.find (fun (v, _) -> v = goal_name) results in
+	Analyse.output_sol_1 distance path
