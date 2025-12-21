@@ -1,8 +1,5 @@
-(* Chargement d'un plan de base martienne et traduction en graphe dynamique. *)
-
 module G = Dyngraph.Make(Dyngraph.Vertex)
 
-(* Construit le graphe à partir des transitions lues. *)
 let build_graph transitions =
 	let id_counter = ref 0 in
 	let name_to_vertex = Hashtbl.create 16 in
@@ -41,11 +38,9 @@ let print_graph g =
 		g
 
 let () =
-	print_endline "Nom du fichier de base martienne ?";
-	let file = read_line () in
+	let file = Sys.argv.(1) in
 	let transitions, (start_name, goal_name) = Analyse.analyse_file_1 file in
 	let graph, table = build_graph transitions in
 	Printf.printf "Plan charge : %d tunnels, %d modules.\n"
 		(List.length transitions) (Hashtbl.length table);
 	Printf.printf "Depart : %s | Arrivee : %s\n" start_name goal_name;
-	print_endline "Graphe (aretes bidirectionnelles) :";
