@@ -6,5 +6,5 @@ Laboratoire Atelier 6
 Habitat Atelier 4
 Habitat Ferme 6
 Ferme Observatoire 5
-Atelier Airlock 4
+Atelier SAS 4
 Hub Observatoire

@@ -9,17 +9,20 @@ OBJS = $(SRCS:.ml=.cmo)
 # Test executable
 TEST_TARGET = run_tests
 TEST_SRCS = test/test_best_path.ml
+TESTS_FILES = $(wildcard test/base_phase1_*.txt)
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(OCAMLC) $(INCLUDES) -o $@ $(OBJS)
 
-test: $(TEST_TARGET)
-	./$(TEST_TARGET)
-
-$(TEST_TARGET): src/dyngraph.cmo $(TEST_SRCS)
-	$(OCAMLC) $(INCLUDES) -o $@ src/dyngraph.cmo $(TEST_SRCS)
+test: $(TARGET)
+	for f in $(TESTS_FILES); do \
+		echo ; \
+		echo test : $$f ; \
+		./$(TARGET) $$f ; \
+		echo ; \
+	done
 
 # Generic rules
 %.cmi: %.mli
