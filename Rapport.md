@@ -63,3 +63,6 @@ Pour chaque individu :
 Les tests (ex. `base_phase2_10_5.txt`) passent : l’ordonnancement affiche tous les trajets avec leurs temps de passage et le temps total final.
 
 
+# Phase 3 : 
+
+Il suffit d'utiliser dijkstra sur le chemin que veut emprunter un individu puis la phase 2

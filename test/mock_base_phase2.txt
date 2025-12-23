@@ -4,7 +4,7 @@ noeud_1 noeud_2 <poids de l'arête>
 . // nombre d'arêtes
 .
 < nombre d'individu >
-noeud_1 -> noeud_5 -> ... -> noeud_3 // chemin de l'individu 1
+src_individu_1 -> dst_individu_1 // chemin de l'individu 1
 .
 . // nombre d'individu
 .
