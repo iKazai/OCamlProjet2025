@@ -1,3 +1,9 @@
+(*
+	Construis un graphe à partir des transitions analysées.
+	@requires transitions : (string * string * int) list
+	@ensures retourne un graphe Dyngraph.Graph.t construit à partir des transitions
+	@ensures chaque transition (src, dst, w) est ajoutée dans les deux sens (src -> dst et dst -> src)
+*)
 let build_graph transitions =
 	let rec aux transitions_acc graph_acc =
 		match transitions_acc with
