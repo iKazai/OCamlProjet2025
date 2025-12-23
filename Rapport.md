@@ -13,39 +13,53 @@ J'étais parti sur un type VERTEX_TYPE qui ne servait à rien et qui complexifia
 6. faire des tests (make test lance les tests)
 
 
-# Phase 2 :
+# Phase 2 : ordonnancement (simulation des tunnels)
 
-## je viens de comprendre qu'il faut renvoyer les nouveaux chemins avec les start_times modifié pour que les traversements soient possibles en itérant un ordonnancement donc en faisant tourner une simulation et en règlant les conflits de tunnels
+## Objectif
+Simuler tous les trajets en parallèle en résolvant les conflits de tunnels. On fait tourner une horloge discrète et on détermine, à chaque événement, qui peut entrer dans quel tunnel.
 
-Mettre en place un fichier test avec 10 transitions et 5 individus
+## Modèle de données
+Chaque personne est un `individual` :
+```ocaml
+type individual = {
+	original_path : string list;  (* chemin complet pour la sortie *)
+	path : string list;           (* chemin restant à parcourir *)
+	initial_starts : int list;    (* délais avant chaque départ *)
+	scheduled_starts : int list;  (* temps réels où elle est entrée dans un tunnel *)
+}
+```
 
-Pour un trajets à $n$ modules on aura $n-1$ temps car le dernier n'est pas traversé
+## Événements temps et conflits
+- `min_head` : plus petit départ imminent sur tous les individus.
+- `min_active` + `decr_active` : temps restant avant libération d’un tunnel occupé et décrément de ces timers.
+- `process_edge` : regarde si le tunnel `src-dst` est libre. Retourne un booléen `moved` pour dire si on a réellement pris le tunnel.
+	```ocaml
+	match find_opt tunnel active with
+	| None -> (* libre *) handle_free ... , moved = true
+	| Some rem -> (* occupé *) handle_occupied ... , moved = false
+	```
 
-Ajout d'une fonction neighbours car on ne peut pas utiliser Hashtbl.find_opt directement sur un graph
+## Avancer les individus (try_move)
+Pour chaque individu :
+- S’il est arrivé (`path` vide ou 1 nœud), on le laisse tel quel.
+- S’il doit partir maintenant (`initial_starts` commence par 0), on tente `process_edge`.
+	- `moved = true` : on consomme l’arête, on avance `path` et `initial_starts`, on ajoute le temps dans `scheduled_starts`.
+	- `moved = false` : tunnel occupé, on ne touche pas au `path`; seuls les délais ont été augmentés.
 
-Si j'ai un chemin de type A -> B avec A ou B qui n'existe pas ca marche quand meme, il faudrait régler ca en faisant la vérification du chemin plus tôt
+## Boucle principale `loop`
+1. Calculer `dt_next_start` (prochain départ) et `dt_active` (prochaine libération de tunnel). Avancer le temps du minimum.
+2. Décrémenter tous les `initial_starts` du `dt` écoulé.
+3. Décrémenter les tunnels actifs (`decr_active`).
+4. Appeler `try_move` pour faire avancer ceux qui peuvent.
+5. Séparer ceux qui ont terminé (`path` vide ou un seul nœud) et accumuler le résultat final : `(original_path, scheduled_starts)`.
 
-Pour l'ordonnancement j'ai l'idée suivante : 
-### Faire tourner une horloge qui a chaque temps (un poids de 5 c'est 5 temps) regarde où sont les gens dans la base 
+## Problèmes rencontrés et fixes
+- **Bug critique :** j’avançais `path` même quand le tunnel était occupé ⇒ individus marqués finis trop tôt, `scheduled_starts` plus courts que le chemin ⇒ crash `List.iter2` dans `output_sol_2`.
+	- Fix : `process_edge` renvoie `moved`; `try_move` n’avance le chemin que si `moved = true`.
+- **Chemin perdu dans la sortie :** une fois arrivé, `path` est vide. J’ai ajouté `original_path` pour afficher le chemin complet dans la solution.
+- **Garde-fou retiré :** j’avais ajouté un `pad_to` pour combler les temps manquants. Une fois le bug d’avancement corrigé, `scheduled_starts` a toujours la bonne longueur, donc `pad_to` a été supprimé.
 
-On peut partir sur une fonction `loop` qui prend la liste des listes de `start_times` (le temps à partir de **maintenant** à laquelle une personne va commencer sa traversée du tunnel) et la liste des chemins (la liste des modules à traverser)
-
-**Propriété de la loop :**
-
-Les deux listes de listes ont la même taille c'est le nombre d'individus, si un individu a un chemin de taille $n$, son nombre de `start_times` doit être de $n-1$ (c'est un prédicat qu'il serait cool de vérifier a chaque tour)
-
-La fonction s'arrête si une des deux est vide puisque tous le monde a fini son trajet
-
-Si une liste est vide, cela signifie qu'un individu a fini son trajet on enlève ce résidu (la liste vide restante)
-
-**Pour un individu :**
-* Si il passe un tunnel, le module source est enlevé de sa liste puisqu'il l'a passé
-* Si un temps est a 0, il s'apprête à passer le tunnel on enlève ce 0 de sa liste des `start_times`
-* A chaque passage dans la boucle on retire 1 à tous ses `start_times`
-
-**Pour deux individus en conflit :**
-* On ne peut pas avoir deux personnes dans un même tunnel donc on en prend 1 et on lui ajoute (à tous ses temps) le prochain `start_time` de l'autre (qui sera d'ailleurs égal au poids de la transition) (puisque quand ce prochain `start_times` sera a 0, cela signifiera que l'autre entame un autre tunnel donc le tunnel en conflit est enfin libre)
-
-* Si un tunnel est déjà pris on ajoute pareil le prochain `start_time`pour qu'il attende que ce soit libre et je ne fais pas de priorité même s'il attend depuis longtemps
+## Résultat
+Les tests (ex. `base_phase2_10_5.txt`) passent : l’ordonnancement affiche tous les trajets avec leurs temps de passage et le temps total final.
 
 
