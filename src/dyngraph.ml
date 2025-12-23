@@ -8,6 +8,7 @@ module type DYNAMIC_GRAPH = sig
   val add_edge : vertex -> int -> vertex -> graph -> graph
   val remove_edge : vertex -> int -> vertex -> graph -> graph
   val dijkstra : graph -> vertex -> (vertex * (int * vertex list)) list
+  val neighbours : graph -> vertex -> (vertex * int) list
 end
 
 module Graph : DYNAMIC_GRAPH = struct
@@ -103,5 +104,11 @@ module Graph : DYNAMIC_GRAPH = struct
       let path = build_path v [] in
       (v, (distance, path)) :: acc
     ) dist []
+
+
+  let neighbours g v =
+    match Hashtbl.find_opt g v with
+    | Some lst -> lst
+    | None -> []
 
 end

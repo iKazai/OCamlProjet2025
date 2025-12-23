@@ -1,4 +1,3 @@
-
 let do_parse cin a =
   let l = input_line cin in
   Scanf.sscanf l a

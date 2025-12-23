@@ -1,6 +1,0 @@
-4
-Alpha Beta 10
-Alpha Gamma 2
-Gamma Beta 3
-Beta Delta 1
-Alpha Delta
