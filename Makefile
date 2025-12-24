@@ -9,7 +9,7 @@ OBJS = $(SRCS:.ml=.cmo)
 # Test executable
 TEST_TARGET = run_tests
 TEST_SRCS = test/test_best_path.ml
-TESTS_FILES = $(wildcard test/base_phase1_*.txt)
+TESTS_FILES = $(wildcard test/base_phase2_*.txt)
 
 all: $(TARGET)
 
