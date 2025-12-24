@@ -66,3 +66,5 @@ Les tests (ex. `base_phase2_10_5.txt`) passent : l’ordonnancement affiche tous
 # Phase 3 : 
 
 Il suffit d'utiliser dijkstra sur le chemin que veut emprunter un individu puis la phase 2
+
+Pour améliorer la création de plus court chemin, j'aurais pu garder ceux que calculais déjà au lieu d'appliquer dijkstra sur chaque chemin du fichier

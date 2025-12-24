@@ -1,0 +1,16 @@
+13
+A B 4
+B C 5
+C D 6
+D E 7
+E F 8
+F G 9
+A H 4
+H C 4
+C I 5
+I J 6
+J K 7
+K L 8
+L M 9
+1
+A -> M

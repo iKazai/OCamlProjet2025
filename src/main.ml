@@ -269,10 +269,26 @@ let schedule_paths graph paths =
   	in
 	loop 0 [] (List.map init_individual paths) (* Etape 1 *) []
 
+(*
+		Fonction auxiliaire qui applique dijkstra à chaque élément d'une liste de couples de modules et renvoie une liste de plus court chemins.
+		Cette fonction peut être grandement améliorer en vérifiant si on n'a pas déjà calculé le plus court chemin à chaque fois. 
+*)
+let _dijkstra_path graph paths =
+	let rec aux path_lst acc =
+		match path_lst with
+		| [] -> List.rev acc
+		| (src, dst) :: tl ->
+			(match List.find_opt (fun (moduledst, _) -> moduledst = dst) (Dyngraph.Graph.dijkstra graph src) with
+			| None -> failwith "[_dijkstra_path] : The path is not correct"
+			(* Dijkstra renvoie une liste de (dst * (poids * chemin))*)
+			| Some (_, (_, path)) -> aux tl (path :: acc))
+	in aux paths []
+
 let () =
   let file = Sys.argv.(1) in
-  let transitions, paths = Analyse.analyse_file_2 file in
+  let transitions, untreated_paths = Analyse.analyse_file_3 file in
   let graph = build_graph transitions in
+	let paths = _dijkstra_path graph untreated_paths in
   let schedules, total_time = schedule_paths graph paths in
   Analyse.output_sol_2 schedules;
   Format.printf "%d@." total_time
